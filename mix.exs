@@ -1,4 +1,4 @@
-defmodule Bot.Mixfile do
+defmodule RSSBot.Mixfile do
   use Mix.Project
 
   def project do
@@ -28,6 +28,8 @@ defmodule Bot.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:nadia, "~> 0.3"}]
+    [{:nadia, "~> 0.3"},
+     {:exleveldb, "~> 0.6"},
+     {:eleveldb, github: "TBK145/eleveldb", branch: "develop"}]
   end
 end

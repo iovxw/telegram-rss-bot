@@ -31,3 +31,6 @@ use Mix.Config
 
 config :nadia,
   token: "your bot token"
+
+config :bot,
+  db_location: "./data"
