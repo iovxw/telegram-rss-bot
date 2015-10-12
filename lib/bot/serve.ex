@@ -21,6 +21,17 @@ defmodule RSSBot.Serve do
     Nadia.send_message(chat.id, "pong")
   end
 
+  def handle_message(%Message{chat: chat, text: "/rss"}) do
+    list = RSSBot.DB.get_rss_list(chat.id)
+    if list == [] do
+      Nadia.send_message(chat.id, "没有订阅任何 RSS")
+    else
+      Nadia.send_message(chat.id,
+        "*订阅的RSS列表:*\n" <> Enum.join(list, "\n"),
+        [parse_mode: "markdown"])
+    end
+  end
+
   def handle_message(%Message{chat: chat, text: <<"/sub ", value :: bitstring>>}) do
     case RSSBot.DB.subscribe(chat.id, value) do
       :ok ->

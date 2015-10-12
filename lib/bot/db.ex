@@ -135,7 +135,7 @@ defmodule RSSBot.DB do
     case get(rss_url) do
       {:ok, value} ->
         list = value |> split_binary(8)
-        list|> Enum.map fn(id_binary) ->
+        list |> Enum.map fn(id_binary) ->
           <<id::unsigned-integer-size(64)>> = id_binary
           id
         end
