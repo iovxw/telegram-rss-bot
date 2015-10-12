@@ -1,6 +1,5 @@
 defmodule RSSBot.Serve do
   alias Nadia.Model.Message
-  alias Nadia.Model.User
 
   def pull_updates(offset \\ -1) do
     case Nadia.get_updates(offset: offset) do
@@ -22,8 +21,22 @@ defmodule RSSBot.Serve do
     Nadia.send_message(chat.id, "pong")
   end
 
-  def handle_message(%Message{chat: chat, text: <<"/rss", value :: bitstring>>}) do
-    Nadia.send_message(chat.id, value)
+  def handle_message(%Message{chat: chat, text: <<"/sub ", value :: bitstring>>}) do
+    case RSSBot.DB.subscribe(chat.id, value) do
+      :ok ->
+        Nadia.send_message(chat.id, value <> " 订阅成功")
+      :already_subscribed ->
+        Nadia.send_message(chat.id, value <> " 已经订阅过了")
+    end
+  end
+
+  def handle_message(%Message{chat: chat, text: <<"/unsub ", value :: bitstring>>}) do
+    case RSSBot.DB.unsubscribe(chat.id, value) do
+      :ok ->
+        Nadia.send_message(chat.id, value <> " 退订成功")
+      :no_subscription ->
+        Nadia.send_message(chat.id, value <> " 从未订阅过")
+    end
   end
 
   def handle_message(_), do: :ok

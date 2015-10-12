@@ -14,7 +14,7 @@ defmodule RSSBot.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :nadia],
+    [applications: [:logger, :httpoison, :nadia],
      mod: {RSSBot, []}]
   end
 
@@ -28,7 +28,8 @@ defmodule RSSBot.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:nadia, "~> 0.3"},
+    [{:httpoison, "~> 0.7.2"},
+     {:nadia, "~> 0.3"},
      {:exleveldb, "~> 0.6"},
      {:eleveldb, github: "TBK145/eleveldb", branch: "develop"}]
   end

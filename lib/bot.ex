@@ -7,7 +7,8 @@ defmodule RSSBot do
     children = [
       worker(RSSBot.DB, [Application.get_env(:bot, :db_location, "./data")]),
       supervisor(Task.Supervisor, [[name: RSSBot.TaskSupervisor]]),
-      worker(Task, [RSSBot.Serve, :pull_updates, []])
+      worker(Task, [RSSBot.Serve, :pull_updates, []]),
+      worker(Task, [RSSBot.Updater, :pull_updates, []], [id: :updater])
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: RSSBot.Supervisor)
