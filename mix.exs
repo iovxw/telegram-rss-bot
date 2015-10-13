@@ -30,7 +30,6 @@ defmodule RSSBot.Mixfile do
   defp deps do
     [{:httpoison, "~> 0.7.2"},
      {:nadia, "~> 0.3"},
-     #{:feedme, "~> 0.0.1"},
      {:timex, "~> 0.19.5"},
      {:feeder_ex, github: "manukall/feeder_ex"},
      {:exleveldb, "~> 0.6"},
