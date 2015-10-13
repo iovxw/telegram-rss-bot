@@ -18,32 +18,42 @@ defmodule RSSBot.Updater do
   defp get_rss_updates(rss_url) do
     case http_get_body(rss_url) do
       {:ok, body} ->
-        case FeederEx.parse(body) do
-          {:ok, feed, _} ->
-            entries = feed.entries |> Enum.reject fn(entry) ->
+        case parse_rss(body) do
+          {:ok, feed} ->
+            update_message = feed.entries |> Enum.reduce([msg: "*#{feed.title}*\n", num: 0],
+            fn(entry, acc) ->
               t = parse_datetime(entry.updated)
               now = Timex.Date.now()
               if Timex.Date.diff(t, now, :secs) < (5 * 60) do
-                false
+                [msg: acc[:msg] <> "[#{entry.title}](#{entry.link})\n", num: acc[:num]+1]
               else
-                true
+                acc
               end
-            end
-            if entries != [] do
-              update_message = entries |> Enum.reduce("*#{feed.title}*\n",
-              fn(update, acc) ->
-                acc <> "[#{update.title}](#{update.link})\n"
-              end)
-              {:ok, update_message}
+            end)
+            if update_message[:num] != 0 do
+              {:ok, update_message[:msg]}
             else
               nil
             end
-          {:error, err} ->
-            IO.inspect err
+          {:error, _} ->
             nil
         end
       {:error, _} ->
         nil
+    end
+  end
+
+  def parse_rss(rss) do
+    try do
+      case FeederEx.parse(rss) do
+        {:ok, feed, _} ->
+          {:ok, feed}
+        {:error, _} = err ->
+          err
+      end
+    rescue
+      err ->
+        {:error, err}
     end
   end
 
@@ -54,7 +64,7 @@ defmodule RSSBot.Updater do
     end
   end
 
-  defp http_get_body(url) do
+  def http_get_body(url) do
     case HTTPoison.get(url) do
       {:ok, response} ->
         case response.status_code do
