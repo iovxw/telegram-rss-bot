@@ -60,7 +60,7 @@ defmodule RSSBot.Updater do
   def parse_datetime(time, format \\ "{RFC1123}") do
     case Timex.DateFormat.parse(time, format) do
       {:ok, date} -> date
-      _ -> 0
+      _ -> Timex.Date.zero
     end
   end
 
