@@ -106,9 +106,10 @@ defmodule RSSBot.DB do
 
           {:ok, value} = get(rss_url)
           list = value |> split_binary(8)
-          # 将删除的是最后一个记录，直接删除整个
           if length(list) == 1 do
+            # 最后一个订阅者退订，直接删除这个 RSS 的数据
             delete(rss_url)
+            delete("old_" <> rss_url)
           else
             list = list |> List.delete(id_binary)
             put(id_binary, list |> Enum.join())

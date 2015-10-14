@@ -17,10 +17,6 @@ defmodule RSSBot.Serve do
     pull_updates(offset)
   end
 
-  def handle_message(%Message{chat: chat, text: "/ping"}) do
-    Nadia.send_message(chat.id, "pong")
-  end
-
   def handle_message(%Message{chat: chat, text: "/rss"}) do
     list = RSSBot.DB.get_rss_list(chat.id)
     if list == [] do
@@ -32,19 +28,23 @@ defmodule RSSBot.Serve do
     end
   end
 
-  def handle_message(%Message{chat: chat, text: <<"/sub ", value :: bitstring>>}) do
-    case check_rss(value) do
+  def handle_message(%Message{chat: chat, text: <<"/sub ", rss_url :: bitstring>>}) do
+    case check_rss(rss_url) do
       {:ok, title} ->
-        case RSSBot.DB.subscribe(chat.id, value) do
+        case RSSBot.DB.subscribe(chat.id, rss_url) do
           :ok ->
             Nadia.send_message(chat.id, "《" <> title <> "》订阅成功")
+            if RSSBot.DB.get_subscribers(rss_url) |> length == 1 do
+              # 第一个订阅者，更新一遍记录
+              RSSBot.Updater.get_rss_updates(rss_url)
+            end
           :already_subscribed ->
             Nadia.send_message(chat.id, "《" <> title <> "》已经订阅过了")
         end
       :not_rss ->
-        Nadia.send_message(chat.id, value <> " 无法获取到 RSS 内容")
+        Nadia.send_message(chat.id, rss_url <> " 无法获取到 RSS 内容")
       :network_error ->
-        Nadia.send_message(chat.id, value <> " 连接失败")
+        Nadia.send_message(chat.id, rss_url <> " 连接失败")
     end
   end
 

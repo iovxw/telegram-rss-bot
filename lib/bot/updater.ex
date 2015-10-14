@@ -15,22 +15,32 @@ defmodule RSSBot.Updater do
     pull_updates
   end
 
-  defp get_rss_updates(rss_url) do
+  def get_rss_updates(rss_url) do
     case http_get_body(rss_url) do
       {:ok, body} ->
         case parse_rss(body) do
           {:ok, feed} ->
-            update_message = feed.entries |> Enum.reduce([msg: "*#{feed.title}*\n", num: 0],
-            fn(entry, acc) ->
-              t = parse_datetime(entry.updated)
-              now = Timex.Date.now()
-              if Timex.Date.diff(t, now, :secs) < (5 * 60) do
-                [msg: acc[:msg] <> "[#{entry.title}](#{entry.link})\n", num: acc[:num]+1]
-              else
-                acc
+            old_rss = case RSSBot.DB.get("old_" <> rss_url) do
+              {:ok, value} -> String.split(value)
+              _ -> []
+            end
+            update_message = feed.entries |> Enum.reduce([
+              msg: "*#{feed.title}*", num: 0, ignore: false, marked: ""
+            ], fn(entry, acc) ->
+              unless acc[:ignore] do
+                t = parse_datetime(entry.updated)
+                now = Timex.Date.now()
+                unless old_rss |> Enum.member?(entry.link) do
+                  acc = acc |> Dict.put(:msg, acc[:msg] <> "\n[#{entry.title}](#{entry.link})")
+                            |> Dict.put(:num, acc[:num] + 1)
+                else
+                  acc = acc |> Dict.put(:ignore, true)
+                end
               end
+              acc |> Dict.put(:marked, acc[:marked] <> " " <> entry.link)
             end)
             if update_message[:num] != 0 do
+              RSSBot.DB.put("old_" <> rss_url, update_message[:marked])
               {:ok, update_message[:msg]}
             else
               nil
