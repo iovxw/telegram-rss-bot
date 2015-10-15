@@ -43,7 +43,7 @@ defmodule RSSBot.DB do
   end
 
   def get_rss_list(chat_id) do
-    id_binary = <<chat_id::unsigned-integer-size(64)>>
+    id_binary = <<chat_id::signed-integer-size(64)>>
     case get(id_binary) do
       {:ok, list} ->
         String.split(list)
@@ -53,7 +53,7 @@ defmodule RSSBot.DB do
   end
 
   def subscribe(chat_id, rss_url) do
-    id_binary = <<chat_id::unsigned-integer-size(64)>>
+    id_binary = <<chat_id::signed-integer-size(64)>>
     already_subscribed = case get(id_binary) do
       {:ok, value} ->
         list = String.split(value)
@@ -91,7 +91,7 @@ defmodule RSSBot.DB do
   end
 
   def unsubscribe(chat_id, rss_url) do
-    id_binary = <<chat_id::unsigned-integer-size(64)>>
+    id_binary = <<chat_id::signed-integer-size(64)>>
     case get(id_binary) do
       {:ok, value} ->
         list = String.split(value)
@@ -137,7 +137,7 @@ defmodule RSSBot.DB do
       {:ok, value} ->
         list = value |> split_binary(8)
         list |> Enum.map fn(id_binary) ->
-          <<id::unsigned-integer-size(64)>> = id_binary
+          <<id::signed-integer-size(64)>> = id_binary
           id
         end
       :not_found ->
