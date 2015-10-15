@@ -1,4 +1,5 @@
 defmodule RSSBot.Serve do
+  require Logger
   alias Nadia.Model.Message
 
   def pull_updates(offset \\ -1) do
@@ -10,8 +11,8 @@ defmodule RSSBot.Serve do
           |> Enum.each(&Task.Supervisor.start_child(RSSBot.TaskSupervisor,
           RSSBot.Serve, :handle_message, [&1.message]))
         end
-      {:error, %Nadia.Model.Error{reason: :timeout}} ->
-        false
+      {:error, %Nadia.Model.Error{reason: err}} ->
+        Logger.error("Nadia.get_updates: #{err}")
     end
     :timer.sleep(200)
     pull_updates(offset)
