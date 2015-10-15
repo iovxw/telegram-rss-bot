@@ -99,15 +99,15 @@ defmodule RSSBot.DB do
           list = list |> List.delete(rss_url)
           put(id_binary, list |> Enum.join(" "))
 
-          {:ok, value} = get("rss_list")
-          list = String.split(value)
-          list = list |> List.delete(rss_url)
-          put("rss_list", list |> Enum.join(" "))
-
           {:ok, value} = get(rss_url)
           list = value |> split_binary(8)
           if length(list) == 1 do
             # 最后一个订阅者退订，直接删除这个 RSS 的数据
+            {:ok, value} = get("rss_list")
+            list = String.split(value)
+            list = list |> List.delete(rss_url)
+            put("rss_list", list |> Enum.join(" "))
+
             delete(rss_url)
             delete("old_" <> rss_url)
           else
