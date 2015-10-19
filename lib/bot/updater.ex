@@ -72,17 +72,23 @@ defmodule RSSBot.Updater do
     end
   end
 
-  def http_get_body(url) do
-    case HTTPoison.get(url) do
-      {:ok, response} ->
-        case response.status_code do
-          c when c == 301 or c == 302 ->
-            http_get_body(response.headers["Location"])
-          200 ->
-            {:ok, response.body}
-        end
-      {:error, _} = err ->
-        err
+  def http_get_body(url, n \\ 0) do
+    if n >= 5 do
+      {:error, "Too many automatic redirections were attempted"}
+    else
+      case HTTPoison.get(url) do
+        {:ok, response} ->
+          case response.status_code do
+            c when c == 301 or c == 302 ->
+              http_get_body(response.headers["Location"])
+            200 ->
+              {:ok, response.body}
+            c ->
+              {:error, "Unexpected status code #{c}"}
+          end
+        {:error, _} = err ->
+          err
+      end
     end
   end
 end
