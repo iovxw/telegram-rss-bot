@@ -123,11 +123,13 @@ defmodule RSSBot.DB do
     end
   end
 
+  defp split_binary(bin, n, list \\ [])
+
   defp split_binary(bin, n, list) when byte_size(bin) <= n do
     [bin|list]
   end
 
-  defp split_binary(bin, n, list \\ []) do
+  defp split_binary(bin, n, list) do
     <<part::binary-size(n), bin::binary>> = bin
     split_binary(bin, n, [part|list])
   end

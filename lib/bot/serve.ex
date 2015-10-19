@@ -18,6 +18,20 @@ defmodule RSSBot.Serve do
     pull_updates(offset)
   end
 
+  defp check_rss(url) do
+    case RSSBot.Updater.http_get_body(url) do
+      {:ok, body} ->
+        case RSSBot.Updater.parse_rss(body) do
+          {:ok, feed} ->
+            {:ok, feed.title}
+          {:error, _} ->
+            :not_rss
+        end
+      {:error, _} ->
+        :network_error
+    end
+  end
+
   def handle_message(%Message{chat: chat, text: "/rss"}) do
     list = RSSBot.DB.get_rss_list(chat.id)
     if list == [] do
@@ -46,20 +60,6 @@ defmodule RSSBot.Serve do
         Nadia.send_message(chat.id, rss_url <> " 无法获取到 RSS 内容")
       :network_error ->
         Nadia.send_message(chat.id, rss_url <> " 连接失败")
-    end
-  end
-
-  defp check_rss(url) do
-    case RSSBot.Updater.http_get_body(url) do
-      {:ok, body} ->
-        case RSSBot.Updater.parse_rss(body) do
-          {:ok, feed} ->
-            {:ok, feed.title}
-          {:error, _} ->
-            :not_rss
-        end
-      {:error, _} ->
-        :network_error
     end
   end
 
