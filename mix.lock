@@ -11,7 +11,7 @@
   "httpoison": {:hex, :httpoison, "0.7.4"},
   "idna": {:hex, :idna, "1.0.2"},
   "lager": {:git, "git://github.com/basho/lager.git", "f65dde85523b6aa6a259db1c93518187ae366515", [tag: "2.2.0"]},
-  "nadia": {:hex, :nadia, "0.3.2"},
+  "nadia": {:hex, :nadia, "0.3.3"},
   "neotoma": {:git, "git://github.com/seancribbs/neotoma.git", "6ac6007c7713712a80096de5c7cdf5b85b01374e", [tag: "1.7.3"]},
   "poison": {:hex, :poison, "1.5.0"},
   "ssl_verify_hostname": {:hex, :ssl_verify_hostname, "1.0.5"},

@@ -28,8 +28,6 @@ defmodule RSSBot.Updater do
               msg: "*#{feed.title}*", num: 0, ignore: false, marked: ""
             ], fn(entry, acc) ->
               unless acc[:ignore] do
-                t = parse_datetime(entry.updated)
-                now = Timex.Date.now()
                 unless old_rss |> Enum.member?(entry.link) do
                   acc = acc |> Dict.put(:msg, acc[:msg] <> "\n[#{entry.title}](#{entry.link})")
                             |> Dict.put(:num, acc[:num] + 1)
