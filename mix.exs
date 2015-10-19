@@ -14,7 +14,7 @@ defmodule RSSBot.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger, :tzdata, :httpoison, :nadia],
+    [applications: [:logger, :httpoison, :nadia],
      mod: {RSSBot, []}]
   end
 
