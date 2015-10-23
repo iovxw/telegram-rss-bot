@@ -32,6 +32,6 @@ defmodule RSSBot.Mixfile do
      {:nadia, "~> 0.3"},
      {:feeder_ex, github: "manukall/feeder_ex"},
      {:exleveldb, "~> 0.6"},
-     {:eleveldb, github: "TBK145/eleveldb", branch: "develop"}]
+     {:eleveldb, github: "basho/eleveldb", tag: "2.1.4"}]
   end
 end

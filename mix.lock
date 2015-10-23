@@ -1,6 +1,6 @@
 %{"combine": {:hex, :combine, "0.5.2"},
-  "cuttlefish": {:git, "git://github.com/basho/cuttlefish.git", "68d54f6b7f0e1e1528fc6ae8555c424d12a31d68", [branch: "develop"]},
-  "eleveldb": {:git, "https://github.com/TBK145/eleveldb.git", "ee268a637e0ef4bd613b1f7360bffd332a22b8e2", [branch: "develop"]},
+  "cuttlefish": {:git, "git://github.com/basho/cuttlefish.git", "9ff58304e3496dfc9644089cfa13f7c255614d9c", [tag: "2.0.5"]},
+  "eleveldb": {:git, "https://github.com/basho/eleveldb.git", "ed3a07269bc099fe3d2d556ce1d3b3a72c26aa05", [tag: "2.1.4"]},
   "exleveldb": {:hex, :exleveldb, "0.6.0"},
   "feeder": {:hex, :feeder, "1.4.7"},
   "feeder_ex": {:git, "https://github.com/manukall/feeder_ex.git", "d9c7fed96c27c6ce33dfdeacd1e9081381ff0645", []},
