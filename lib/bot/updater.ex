@@ -80,7 +80,17 @@ defmodule RSSBot.Updater do
         {:ok, response} ->
           case response.status_code do
             c when c == 301 or c == 302 ->
-              http_get_body(response.headers["Location"])
+              case response.headers["Location"] do
+                <<"/", path::binary>> ->
+                  uri = URI.parse(url)
+                  http_get_body(uri.host <> "/" <> path)
+                <<"http://", _::binary>> = url ->
+                  http_get_body(url)
+                <<"https://", _::binary>> = url ->
+                  http_get_body(url)
+                path ->
+                  http_get_body(url <> "/" <> path)
+              end
             200 ->
               {:ok, response.body}
             c ->
